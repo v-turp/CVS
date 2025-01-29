@@ -12,6 +12,10 @@ import kotlinx.coroutines.flow.callbackFlow
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
+import java.util.Locale
 
 class MainActivityViewModel: ViewModel() {
 
@@ -27,6 +31,17 @@ class MainActivityViewModel: ViewModel() {
         _searchingSearchBarQuery.value = searching
     }
 
+    fun formatDateTime(dateTime: String): String{
+        val dateTimeString = dateTime
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssX")
+        val zoneDateTime = ZonedDateTime.parse(dateTimeString, formatter)
+
+//        val customFormatter = DateTimeFormatter.ofPattern("MMM dd, yyyy 'at' HH:mm:ss z")
+        val customFormatter2 = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withLocale(
+            Locale.getDefault())
+
+        return zoneDateTime.format(customFormatter2)
+    }
     fun getFlickerDataFlow(searchQuery: String) = flickrRetrofitCallback(searchQuery)
 
     private fun flickrRetrofitCallback(searchQuery: String) = callbackFlow {

@@ -17,12 +17,12 @@ import org.junit.Test
 class CvsUnitTest {
 
     @Test
-    fun initialSearchingStateIsFalse(){// TODO DON'T TOUCH!!!!! WORKS!!!!!
+    fun initialSearchingStateIsFalse(){
         assertFalse(MainActivityViewModel().searchingSearchBarQuery.value)
     }
 
     @Test
-    fun updatedSearchingValueIsTrue(){// TODO DON'T TOUCH!!!!! WORKS!!!!!
+    fun updatedSearchingValueIsTrue(){
         val viewModel = MainActivityViewModel()
         viewModel.updateNetworkSearchingStatus(true)
 
@@ -35,7 +35,7 @@ class CvsUnitTest {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun collectedUpdatedValueForSearchingStatusIsTrue(){// TODO DON'T TOUCH!!!!! WORKS!!!!!
+    fun collectedUpdatedValueForSearchingStatusIsTrue(){
         val viewModel = MainActivityViewModel()
         runTest(UnconfinedTestDispatcher()) {
             viewModel.updateNetworkSearchingStatus(true)

@@ -9,12 +9,16 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -35,7 +39,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import coil3.compose.AsyncImage
+import com.kodeco.cvstest.R
 import com.kodeco.cvstest.data.FlickrResponse
+import com.kodeco.cvstest.data.Item
 import com.kodeco.cvstest.presentation.viewmodels.MainActivityViewModel
 import com.kodeco.cvstest.ui.theme.CVSTestTheme
 import kotlinx.coroutines.delay
@@ -87,17 +93,17 @@ class MainActivity : ComponentActivity() {
                     SearchBar(modifier = Modifier.fillMaxWidth(),
                         inputField = {
                             SearchBarDefaults.InputField(
-                                placeholder = { Text(text = "Search") }, // TODO internationalization
+                                placeholder = { Text(text = resources.getString(R.string.search)) },
                                 leadingIcon = {
                                     Icon(
                                         imageVector = Icons.Default.Search,
-                                        contentDescription = "Search Icon"
+                                        contentDescription = resources.getString(R.string.search_icon)
                                     )
                                 },
                                 trailingIcon = {
                                     Icon(
                                         imageVector = Icons.Default.Clear,
-                                        contentDescription = "Clear Search Icon"    // TODO internationalization
+                                        contentDescription = resources.getString(R.string.clear_search_icon)
                                     )
                                 },
                                 query = query,
@@ -138,7 +144,7 @@ class MainActivity : ComponentActivity() {
         var showImageDetails by rememberSaveable {mutableStateOf(false)}
         val onDismissRequest : () -> Unit = { showImageDetails = false}
         if (showImageDetails){
-            ImageDetailsAlert(description = dataSet.items?.get(index)!!.title,
+            ImageDetailsAlert(imageDetails = dataSet.items?.get(index)!!,
                               onDismissRequest = onDismissRequest)
         }
 
@@ -151,11 +157,21 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    fun ImageDetailsAlert( description: String, onDismissRequest: () -> Unit){
+    fun ImageDetailsAlert( imageDetails: Item, onDismissRequest: () -> Unit){
 
         AlertDialog(onDismissRequest = {onDismissRequest.invoke()},
                     confirmButton = {},
-                    text = { Text(text = description)})
+                    text = {
+                        Card(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                            AsyncImage(model = imageDetails.media.m,
+                                modifier = Modifier.size(width = 200.dp, height = 200.dp),
+                                contentDescription = imageDetails.description )
+                            Text(text = "Title: ${imageDetails.title}")
+                            Text(text = "Description: ${imageDetails.description}")
+                            Text(text = "Author: ${imageDetails.author}")
+                            Text(text = "Date Published: ${vmFlickr.formatDateTime(imageDetails.published)} ")
+                        }
+                    })
     }
 
     @Preview(showBackground = true)
